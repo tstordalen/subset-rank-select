@@ -1,3 +1,19 @@
+# Rank and Select on Degenerate Strings
+
+This repository will contain instructions on how to reproduce the experiments in the paper ``Rank and Select on Degenerate Strings'' (to be announced). 
+The experiments are based on the test framework by Alanko et al., which you can find [here](https://github.com/jnalanko/SubsetWT-Experiments/tree/master). 
+
+As it currently stands, this repository has not been updated with the changes we've made to their framework; they will be added shortly. 
+
+
+All of the following is the original readme from the repository of Alanko et al.
+
+---
+
+
+
+
+
 # SubsetWT experiments
 
 This repository contains instructions and code to reproduce the experiments in the paper "Subset Wavelet Trees" for SEA 2023.
