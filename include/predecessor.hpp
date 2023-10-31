@@ -27,14 +27,14 @@ public:
 
     Predecessor(const vector<uint64_t>& data) {
         _r = data.size();
-        _gaps = new uint16_t[_r]; // allocates an array _gaps of _r ints, whose values are initially undefined
+        _gaps = new uint32_t[_r]; // allocates an array _gaps of _r ints, whose values are initially undefined
         _gaps[0] = data[0];
         for(uint64_t i=1;i<_r;i++){
             uint64_t g = data[i] - data[i-1];
-            if(g > 65535){ // bigger than 16 bit integers
+            if(g > 1000000){ // bigger than 16 bit integers
                 cerr << "Uh oh: big gap\n";
             }
-            _gaps[i] = (uint16_t)g;
+            _gaps[i] = (uint32_t)g;
         }
 
         uint32_t maxGap = 0;
@@ -109,7 +109,7 @@ public:
             this->_numpblocks = other._numpblocks;
             this-> _partialSums = new uint64_t[_numpblocks + 1];
             std::copy(other._partialSums, other._partialSums + _numpblocks + 1, _partialSums);
-            this-> _gaps = new uint16_t[_r];
+            this-> _gaps = new uint32_t[_r];
             std::copy(other._gaps, other._gaps + _r, _gaps);
             this->_msbn = other._msbn;
             this->_jtShift = other._jtShift;
@@ -205,7 +205,7 @@ private:
     //uint32_t _pbs = 8; //predecessor block size
     uint32_t _numpblocks; //number of blocks in predecessor structure
     uint64_t *_partialSums; //every _pbs^th
-    uint16_t *_gaps;
+    uint32_t *_gaps;
 
     uint32_t _msbn;
     uint32_t _jtShift;
