@@ -1,13 +1,31 @@
 # Rank and Select on Degenerate Strings
 
 This repository will contain instructions on how to reproduce the experiments in the paper ``Rank and Select on Degenerate Strings'' (to be announced). 
-The experiments are based on the test framework by Alanko et al., which you can find [here](https://github.com/jnalanko/SubsetWT-Experiments/tree/master). 
 
-As it currently stands, this repository has not been updated with the changes we've made to their framework; they will be added shortly. 
+The experiments are based on the tests by Alanko et al. for their Subset Wavelet Tree, which you can find [here](https://github.com/jnalanko/SubsetWT-Experiments/tree/master). For the most part we have not modified their files. The exceptions are: 
 
+- Removed `main.cpp`; contained a benchmark for their rank-pair structures which we did not need.
+- Removed `covid_dataset_fasta_headers.txt.gz`, which we did not use. 
+- Modified `kmer_search.cpp' to extend the $k$-mer benchmark to also include our structures.
+- Modified `include/predecessor.hh` to avoid an overflow bug. 
+- Modified 'include/SubsetMatrixRank.hh` to add support for the alphabet {0,1,2,3} in addition to the original alphabet {'A','C','G','T'}. All the changes are inside
+        #ifdef RUNNING_RANK_BENCHMARK
+        ...
+        #endif
+and will not compile unless this compiler macro is defined. 
+- The makefile, to add another target and remove the target for the rank-pair benchmark. 
+ 
+In addition to this, we added the files:
+- `rank_benchmark.cpp' which benchmarks the subset-rank queries directly, as opposed to indirectly through the SBWT index.
+- `include/ReductionTheorem1-iii.hh` which implements Theorem1, reduction 3. 
+- `include/DenseSparseDecomposition.hh` which implements the DSD
+- `include/WrappedWaveletTrees.hh` which defines a wrapper for SDSL wavelet trees to make them compatible with the rest of the data structures. 
 
-All of the following is the original readme from the repository of Alanko et al.
+See the paper for details on how we performed our experiments.
 
+What follows is the original README from the repository of Alanko et al.
+Refer to that to see where to find the data, how to build the indices,
+build the programs, and run the tests.    
 ---
 
 
