@@ -26,7 +26,7 @@ See the paper for details on how we performed our experiments.
 
 We refer to the README of Alanko et al (see below) for instructions on how to build the project and run the tests, but first we note: 
 
-- The E. Coli data takes 5GB, and the ERR5035349 takes about 18 GB. However, 8GB of RAM should be sufficient to run the experiments. You can limit RAM usage when creating the SBWT index (the algorithm uses disk), and the SBWT index for each of the data sets is approximately 1.2GB. 
+- The E. Coli data takes 5GB, and the ERR5035349 takes about 18 GB. However, 8GB of RAM should be sufficient to run the experiments. You can limit RAM usage when creating the SBWT index (the algorithm uses disk), and the size of the SBWT indices for each of the data sets is approximately 200MB and 1.2GB, respectively. 
 - They refer to the `microbenchmark` build target, which no longer exists. Use `rank_query_benchmark` to build the rank benchmark. 
 
 
