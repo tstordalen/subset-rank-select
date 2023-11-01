@@ -1,6 +1,6 @@
 # Rank and Select on Degenerate Strings
 
-This repository will contain instructions on how to reproduce the experiments in the paper ``Rank and Select on Degenerate Strings'' (to be announced). 
+This repository contains instructions to reproduce the experiments in the paper ``Rank and Select on Degenerate Strings'' (to be announced). 
 
 The experiments are based on the tests by Alanko et al. for their Subset Wavelet Tree, which you can find [here](https://github.com/jnalanko/SubsetWT-Experiments/tree/master). For the most part we have not modified their files. The exceptions are: 
 
