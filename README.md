@@ -13,7 +13,7 @@ The experiments are forked from the experiments by Alanko et al. for their Subse
         ...
         #endif`
 and will not cause their code to change unless this compiler macro is defined. This is only necessary when running the subset-rank benchmark, and the macro is already defined by the `rank_query_benchmark` build target.
-- Modified he makefile to remove a target and add a new one. 
+- Modified the makefile to remove a target and add a new one. 
  
 In addition to this we added the files:
 - `rank_benchmark.cpp` which benchmarks the subset-rank queries directly, as opposed to indirectly through the SBWT index.
