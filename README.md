@@ -8,11 +8,11 @@ The experiments are based on the tests by Alanko et al. for their Subset Wavelet
 - Removed `covid_dataset_fasta_headers.txt.gz`, which we did not use. 
 - Modified `kmer_search.cpp` to extend the $k$-mer benchmark to also include our structures.
 - Modified `include/predecessor.hh` to avoid an overflow bug. 
-- Modified 'include/SubsetMatrixRank.hh` to add support for the alphabet {0,1,2,3} in addition to the original alphabet {'A','C','G','T'}. All the changes are inside
+- Modified `include/SubsetMatrixRank.hh` to add support for the alphabet {0,1,2,3} in addition to the original alphabet {'A','C','G','T'}. All the changes are inside
        `#ifdef RUNNING_RANK_BENCHMARK
         ...
         #endif`
-and will not compile unless this compiler macro is defined. 
+and will not cause their code to change unless this compiler macro is defined. This is only necessary when running the subset-rank benchmark, and the macro is already defined by the `rank_query_benchmark` build target.
 - Modified he makefile to remove a target and add a new one. 
  
 In addition to this we added the files:
@@ -26,7 +26,7 @@ See the paper for details on how we performed our experiments.
 
 We refer to the README of Alanko et al (see below) for instructions on how to build the project and run the tests, but first we note: 
 
-- The E. Coli data takes 5GB, and the ERR5035349 takes about 18 GB. However, 8GB of RAM should be sufficient to run the experiments. You can limit RAM usage when creating the SBWT index (the algorithm it uses disk), and the SBWT index for each of the data sets is at most 1.2GB. 
+- The E. Coli data takes 5GB, and the ERR5035349 takes about 18 GB. However, 8GB of RAM should be sufficient to run the experiments. You can limit RAM usage when creating the SBWT index (the algorithm uses disk), and the SBWT index for each of the data sets is approximately 1.2GB. 
 - They refer to the `microbenchmark` build target, which no longer exists. Use `rank_query_benchmark` to build the rank benchmark. 
 
 

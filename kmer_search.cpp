@@ -121,9 +121,6 @@ int main(int argc, char** argv){
     auto bitmagic = build_variant<sbwt::SBWT<NewSubsetWT<BitMagic, BitMagic>>>(sbwt);
     benchmark(bitmagic, "SWT (scan)", sbwt_index_file, query_file, results);
 
-    //auto basic_wt = build_variant<sbwt::SBWT<NewSubsetWT<SDSL_WT<plain_wt_t>, SDSL_WT<plain_wt_t>>>>(sbwt);
-    //benchmark(basic_wt, "basic-wt", sbwt_index_file, query_file, results);
-
     auto rrr_wt = build_variant<sbwt::SBWT<NewSubsetWT<SDSL_WT<rrr_wt_t>, SDSL_WT<rrr_wt_t>>>>(sbwt);
     benchmark(rrr_wt, "SWT (rrr)", sbwt_index_file, query_file, results);
     
