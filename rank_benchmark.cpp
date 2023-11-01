@@ -58,26 +58,6 @@ void benchmark_rank(uint64_t n_sets, uint64_t seed, uint64_t queries_id, const v
     cerr << "Single rank ns/query: " << (double)(t1-t0) / queries.size() * 1000 << endl << endl;
 }
 
-// Returns root, left child, right child
-tuple<vector<char>,vector<char>,vector<char>> get_sequences(const sbwt::plain_matrix_sbwt_t& sbwt){
-    vector<char> root, left, right;
-    int64_t n = sbwt.number_of_subsets();
-    for(int64_t i = 0; i < n; i++){
-        bool A = sbwt.get_subset_rank_structure().A_bits[i];
-        bool C = sbwt.get_subset_rank_structure().C_bits[i];
-        bool G = sbwt.get_subset_rank_structure().G_bits[i];
-        bool T = sbwt.get_subset_rank_structure().T_bits[i];
-
-        bool AC = A || C;
-        bool GT = G || T;
-        root.push_back(AC*2 + GT);
-        if(AC) left.push_back(A*2 + C - 1); // -1: shift from [1,3] to [0,2]
-        if(GT) right.push_back(G*2 + T - 1);  // -1: shift from [1,3] to [0,2]
-    }
-    return {root, left, right};
-}
-
-
 // Build subset rank structure
 template<typename rank_structure_t>
 rank_structure_t build_srs(const sbwt::plain_matrix_sbwt_t& sbwt){
@@ -90,8 +70,8 @@ rank_structure_t build_srs(const sbwt::plain_matrix_sbwt_t& sbwt){
 }
 
 
-// the hash used in this function is probably not great, but 
-// sufficient to distinguish a handful of different sequences
+// Generates a hash value of the queries to verify the same test data was used across
+// different runs. The hash function is probably not great, but sufficient for this case. 
 std::pair<std::vector<Query>, uint64_t> generate_queries(uint64_t n_sets, uint64_t n_queries, uint64_t seed){
     std::vector<Query> queries(n_queries); 
 
@@ -100,6 +80,7 @@ std::pair<std::vector<Query>, uint64_t> generate_queries(uint64_t n_sets, uint64
     std::uniform_int_distribution<uint64_t>  r_alphabet(0, 3);
     
     uint64_t hash = 1;
+    // values to compute the hash function
     uint64_t a = 9163009843618600053;
     uint64_t b = 264556097;
     uint64_t c = 796964356;
@@ -108,6 +89,7 @@ std::pair<std::vector<Query>, uint64_t> generate_queries(uint64_t n_sets, uint64
     for(uint64_t i = 0; i < n_queries; i++){
         queries[i].pos = r_pos(generator); 
         queries[i].symbol = r_alphabet(generator);
+
         tmp = a*(queries[i].pos + queries[i].symbol * c) >> (64 - 8); //multiply-shift (ish) to bytes
         hash = (b * hash + tmp) % p; // hashing for sequences 
     }

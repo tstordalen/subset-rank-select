@@ -1,7 +1,7 @@
 #pragma once
 
 // Wrapper for sdsl wavelet trees to make them compatible
-// with the other rank structuRankStructuresres
+// with the other rank structures
 template<typename wt_type_t>
 class WaveletTreeWrapper {
 

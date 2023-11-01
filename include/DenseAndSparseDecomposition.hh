@@ -34,10 +34,8 @@ public:
         
         auto n = A_bits.size();
         
-        // Temporary storage for creating the rank structure
         std::vector<char> data; 
 
-        // Temporary vectors to create sparse vectors
         auto tmp_empty = sdsl::bit_vector(n, 0); 
         char bases[4] = {'A', 'C', 'G', 'T'};
         std::array<sdsl::bit_vector, 4> tmps = {
