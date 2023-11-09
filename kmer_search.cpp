@@ -62,7 +62,7 @@ void benchmark(const variant_t& index, const string& index_name, const string& d
             << dataset_name << ", " 
             << query_file  << ", "
             << index_name << ", " 
-	    << sum << ", " // use this to verify the same result for all structures
+	        << sum << ", "
             << (double)(total_time_micros) / n_kmers << ", " 
             << (double)space_bits / index.number_of_kmers() << endl;
     

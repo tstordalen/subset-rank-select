@@ -41,7 +41,7 @@ void benchmark_rank(std::string sbwt_index_name, uint64_t n_symbols, uint64_t se
             << seed << ", "
             << sum  << ", "
             << rs_name << ", "
-            << (double)(t1-t0)/queries.size() << ", "                 //us / query
+            << (double)(t1-t0)/queries.size() * 1000 << ", "
             << (double)(rs.size_in_bytes() * 8) / n_symbols << endl;  //bits / char 
 
     cerr << "Benchmarking: " << rs_name << endl;
@@ -161,4 +161,5 @@ int main(int argc, char** argv){
     benchmark_rank(sbwt_index_file, n_symbols_in_index, seed, queries, results,    split_rrr.first,    split_rrr.second); 
     benchmark_rank(sbwt_index_file, n_symbols_in_index, seed, queries, results,  split_plain.first,  split_plain.second); 
     benchmark_rank(sbwt_index_file, n_symbols_in_index, seed, queries, results,   matrix_rrr.first,   matrix_rrr.second); 
+
 }
