@@ -1,9 +1,6 @@
 #pragma once
 
-enum AlphabetType {Reduced_0123, ACGT};
-
-// alphabet_type specifies if the alphabet is {0,1,2,3} or {A,C,G,T}
-template<typename rank_structure_t, AlphabetType alphabet_type = ACGT>
+template<typename rank_structure_t>
 class DenseSparseDecomp {
 
 public:
@@ -19,11 +16,10 @@ public:
     // rank functionality for the extra characters that don't fit in r_elems
     std::array<sdsl::sd_vector<>, 4> aux;
     std::array<sdsl::sd_vector<>::rank_1_type, 4> r_aux;
-    
+
     // Sparse vector with rank support to count the number of empty sets
     sdsl::sd_vector<> empty_sets;
     sdsl::sd_vector<>::rank_1_type r_empty_sets;
-
 
     DenseSparseDecomp(){}
     DenseSparseDecomp(const sdsl::bit_vector& A_bits,
@@ -65,13 +61,13 @@ public:
             }
         }
         r_elems = rank_structure_t(data);
-        
+
         for(int i = 0; i < 4; i++){
             aux[i] = sdsl::sd_vector<>(tmps[i]);
             sdsl::util::init_support(r_aux[i], &aux[i]);
         }
         empty_sets = sdsl::sd_vector<>(tmp_empty);
-        sdsl::util::init_support(r_empty_sets, &empty_sets);
+	sdsl::util::init_support(r_empty_sets, &empty_sets);
     }
 
     DenseSparseDecomp(const DenseSparseDecomp& other){
@@ -95,10 +91,7 @@ public:
     // Rank of symbol in half-open interval [0..pos)
     int64_t rank(int64_t pos, char c) const {
         auto zeroes = r_empty_sets(pos);
-        // Reduce alphabet only if c is in {A,C,G,T} and not if it is in {0,1,2,3}
-        if constexpr (alphabet_type == AlphabetType::ACGT){
-            c = cmap[c & 0b111];
-        }
+        c = cmap[c & 0b111];
         auto res = r_elems.rank(pos-zeroes, c);
         return res + r_aux[c](pos);
     }
@@ -110,6 +103,8 @@ public:
             size += sdsl::size_in_bytes(r_aux[i]);
         }
         size += sizeof(cmap);
+        size += sdsl::size_in_bytes(empty_sets);
+        size += sdsl::size_in_bytes(r_empty_sets);
         return size;
     }
 

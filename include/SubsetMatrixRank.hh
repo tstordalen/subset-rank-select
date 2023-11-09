@@ -28,17 +28,8 @@ class SubsetMatrixRank{
     rank_support_t T_bits_rs;
 
 
-    #ifdef RUNNING_RANK_BENCHMARK 
-    std::array<rank_support_t, 4> rank_structures;
-    #endif
     // Count of character c in subsets up to pos, not including pos
     int64_t rank(int64_t pos, char c) const{
-
-        #ifdef RUNNING_RANK_BENCHMARK
-        // In the case of running a rank benchmark, the alphabet is 0,1,2,3
-        return rank_structures[c].rank(pos);// added this line
-        #endif
-        
         if(c == 'A') return A_bits_rs.rank(pos);
         if(c == 'C') return C_bits_rs.rank(pos);
         if(c == 'G') return G_bits_rs.rank(pos);
@@ -54,10 +45,6 @@ class SubsetMatrixRank{
         sdsl::util::init_support(this->C_bits_rs, &(this->C_bits));
         sdsl::util::init_support(this->G_bits_rs, &(this->G_bits));
         sdsl::util::init_support(this->T_bits_rs, &(this->T_bits));
-        
-        #ifdef RUNNING_RANK_BENCHMARK 
-        rank_structures = {A_bits_rs, C_bits_rs, G_bits_rs, T_bits_rs};
-        #endif
     }
 
     SubsetMatrixRank(const SubsetMatrixRank& other){
@@ -81,10 +68,6 @@ class SubsetMatrixRank{
             this->C_bits_rs.set_vector(&(this->C_bits)); 
             this->G_bits_rs.set_vector(&(this->G_bits)); 
             this->T_bits_rs.set_vector(&(this->T_bits)); 
-
-            #ifdef RUNNING_RANK_BENCHMARK 
-            this->rank_structures = {A_bits_rs, C_bits_rs, G_bits_rs, T_bits_rs};
-            #endif
 
             return *this;
         } else return *this; // Assignment to self -> do nothing.

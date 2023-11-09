@@ -19,6 +19,12 @@ class SubsetConcatRank{
 
     public:
 
+    int64_t size_in_bytes() const{
+        return  sdsl::size_in_bytes(concat) + 
+                sdsl::size_in_bytes(L) + 
+                sdsl::size_in_bytes(L_ss0);
+    }
+
     // Count of character c in subsets up to pos, not including pos
     int64_t rank(int64_t pos, char c) const{
         return concat.rank(L_ss0.select(pos+1), c);

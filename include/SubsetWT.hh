@@ -19,6 +19,13 @@ public:
     WT_type AC_wt;
     WT_type GT_wt;
 
+    int64_t size_in_bytes() const {
+        return  sdsl::size_in_bytes(ACGT_wt) +
+                sdsl::size_in_bytes(AC_wt) + 
+                sdsl::size_in_bytes(GT_wt);
+    }
+
+
     char to_char(bool left, bool right) const{
         if(!left && !right) return '0';
         if(!left && right) return '1';

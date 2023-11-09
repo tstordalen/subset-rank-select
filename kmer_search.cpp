@@ -1,4 +1,3 @@
-// From [ABPV]
 #include <sdsl/bit_vectors.hpp>
 #include <sdsl/rank_support_v.hpp>
 #include "SBWT.hh"
@@ -11,10 +10,10 @@
 #include "NewSubsetWT.hh"
 #include "SeqIO.hh"
 
-// Structures from [BGS]
 #include "DenseAndSparseDecomposition.hh"
-#include "ReductionTheorem1-ii.hh"
+#include "ReductionTheorem1-iii.hh"
 #include "WrappedWaveletTrees.hh"
+#include "SIMDRank.hh"
 
 template<typename variant_t>
 variant_t build_variant(const sbwt::plain_matrix_sbwt_t& input){
@@ -72,6 +71,11 @@ void benchmark(const variant_t& index, const string& index_name, const string& d
     cerr << "Total k-mers queried: " << n_kmers << endl << endl;;
 }
 
+template <typename T>
+std::pair<T, std::string> variant(std::string name, T variant){
+    return {variant, name};
+}
+
 int main(int argc, char** argv){
 
     if(argc == 1){
@@ -83,43 +87,54 @@ int main(int argc, char** argv){
     string query_file = string(argv[2]);
 
     sbwt::throwing_ifstream in(sbwt_index_file, ios::binary);
-    string variant = load_string(in.stream); // read variant type
-    if(variant != "plain-matrix"){
+    string sbwt_variant = load_string(in.stream); // read variant type
+    if(sbwt_variant != "plain-matrix"){
         cerr << "Error: input is not a plain-matrix SBWT" << endl;
     }
 
     sbwt::plain_matrix_sbwt_t sbwt;
     sbwt.load(in.stream);
     cerr << "Loaded a plain matrix SBWT with " << sbwt.number_of_subsets() << " subsets" << endl;
-
-
-
-    ofstream results("kmer_search_results.csv", std::ios_base::app);
     
-    benchmark(sbwt, "Matrix", sbwt_index_file, query_file, results);
-     
-    auto thm1_ii =  build_variant<sbwt::SBWT<ReductionThm1ii<wt_il_wrapped_t>>>(sbwt);
-    benchmark(thm1_ii, "Thm1(iii)", sbwt_index_file, query_file, results);
-    
-    auto dsd_wt_il = build_variant<sbwt::SBWT<DenseSparseDecomp<wt_il_wrapped_t>>>(sbwt);
-    benchmark(dsd_wt_il, "DSD", sbwt_index_file, query_file, results);    
+    // From 'Rank and Select on Degenerate Strings', Bille et al.
+    // Paper: [TBA]
+    auto       matrix = variant("Matrix", sbwt);
+    auto      thm1iii = variant("Thm1(iii)", build_variant<sbwt::SBWT<ReductionThm1iii<wt_il_wrapped_t>>>(sbwt));
+    auto      dsd_rrr = variant("DSD (rrr)", build_variant<sbwt::SBWT<DenseSparseDecomp<wt_rrr_wrapped_t>>>(sbwt));
+    auto     dsd_scan = variant("DSD (scan)", build_variant<sbwt::SBWT<DenseSparseDecomp<BitMagic>>>(sbwt));    
+    auto         simd = variant("SIMD", build_variant<sbwt::SBWT<DenseSparseDecomp<SIMDRank<4>>>>(sbwt));
 
-    auto dsd_wt_rrr = build_variant<sbwt::SBWT<DenseSparseDecomp<wt_rrr_wrapped_t>>>(sbwt);
-    benchmark(dsd_wt_rrr, "DSD (rrr)", sbwt_index_file, query_file, results);    
+    // From 'Subset Wavelet Trees' by Alanko et al.
+    // Paper:  https://doi.org/10.4230/LIPIcs.SEA.2023.4
+    auto  swt_rrr_gen = variant("SWT (rrr gen.)", build_variant<sbwt::SBWT<NewSubsetWT<RRR_Generalization, RRR_Generalization>>>(sbwt));
+    auto     swt_scan = variant("SWT (scan)", build_variant<sbwt::SBWT<NewSubsetWT<BitMagic, BitMagic>>>(sbwt));
+    auto      swt_rrr = variant("SWT (rrr)", build_variant<sbwt::SBWT<NewSubsetWT<SDSL_WT<rrr_wt_t>, SDSL_WT<rrr_wt_t>>>>(sbwt));
+    auto    swt_split = variant("SWT (split)", build_variant<sbwt::SBWT<NewSubsetWT<SplitStructure<4>, SplitStructure<3>>>>(sbwt));
     
-    auto dsd_bitmagic = build_variant<sbwt::SBWT<DenseSparseDecomp<BitMagic>>>(sbwt);
-    benchmark(dsd_bitmagic, "DSD (scan)", sbwt_index_file, query_file, results);    
+    // From 'Small Searchable k-Spectra via Subset Rank Queries on the Spectral Burrows-Wheeler Transform', Alanko et al.
+    // Paper: https://doi.org/10.1137/1.9781611977714.20
+    auto    concat_ef = variant("Concat (ef)", build_variant<sbwt::mef_concat_sbwt_t>(sbwt));
+    auto concat_plain = variant("Concat (plain)", build_variant<sbwt::plain_concat_sbwt_t>(sbwt));
+    auto     split_ef = variant("Split (ef)", build_variant<sbwt::mef_split_sbwt_t>(sbwt));
+    auto    split_rrr = variant("Split (rrr)", build_variant<sbwt::rrr_split_sbwt_t>(sbwt));
+    auto  split_plain = variant("Split (plain)", build_variant<sbwt::plain_split_sbwt_t>(sbwt));
+    auto   matrix_rrr = variant("Matrix (rrr)", build_variant<sbwt::rrr_matrix_sbwt_t>(sbwt));
 
-    auto rrr_generalization = build_variant<sbwt::SBWT<NewSubsetWT<RRR_Generalization, RRR_Generalization>>>(sbwt);
-    benchmark(rrr_generalization, "SWT (rrr gen.)", sbwt_index_file, query_file, results);
 
-    auto bitmagic = build_variant<sbwt::SBWT<NewSubsetWT<BitMagic, BitMagic>>>(sbwt);
-    benchmark(bitmagic, "SWT (scan)", sbwt_index_file, query_file, results);
-
-    auto rrr_wt = build_variant<sbwt::SBWT<NewSubsetWT<SDSL_WT<rrr_wt_t>, SDSL_WT<rrr_wt_t>>>>(sbwt);
-    benchmark(rrr_wt, "SWT (rrr)", sbwt_index_file, query_file, results);
-    
-    auto split = build_variant<sbwt::SBWT<NewSubsetWT<SplitStructure<4>, SplitStructure<3>>>>(sbwt);
-    benchmark(split, "SWT (split)", sbwt_index_file, query_file, results);
-    
+    ofstream results("kmer_search_results.csv");
+    benchmark(      matrix.first,       matrix.second, sbwt_index_file, query_file, results); 
+    benchmark(     thm1iii.first,      thm1iii.second, sbwt_index_file, query_file, results); 
+    benchmark(     dsd_rrr.first,      dsd_rrr.second, sbwt_index_file, query_file, results); 
+    benchmark(    dsd_scan.first,     dsd_scan.second, sbwt_index_file, query_file, results); 
+    benchmark(        simd.first,         simd.second, sbwt_index_file, query_file, results); 
+    benchmark( swt_rrr_gen.first,  swt_rrr_gen.second, sbwt_index_file, query_file, results); 
+    benchmark(    swt_scan.first,     swt_scan.second, sbwt_index_file, query_file, results); 
+    benchmark(     swt_rrr.first,      swt_rrr.second, sbwt_index_file, query_file, results); 
+    benchmark(   swt_split.first,    swt_split.second, sbwt_index_file, query_file, results); 
+    benchmark(   concat_ef.first,    concat_ef.second, sbwt_index_file, query_file, results); 
+    benchmark(concat_plain.first, concat_plain.second, sbwt_index_file, query_file, results); 
+    benchmark(    split_ef.first,     split_ef.second, sbwt_index_file, query_file, results); 
+    benchmark(   split_rrr.first,    split_rrr.second, sbwt_index_file, query_file, results); 
+    benchmark( split_plain.first,  split_plain.second, sbwt_index_file, query_file, results); 
+    benchmark(  matrix_rrr.first,   matrix_rrr.second, sbwt_index_file, query_file, results); 
 }

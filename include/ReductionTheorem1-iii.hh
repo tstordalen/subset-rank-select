@@ -2,9 +2,8 @@
 #include "DenseAndSparseDecomposition.hh"
 
 
-// alphabet_type specifies if the alphabet is {0,1,2,3} or {A,C,G,T}
-template<typename rank_structure_t, AlphabetType alphabet_type = AlphabetType::ACGT>
-class ReductionThm1ii {
+template<typename rank_structure_t>
+class ReductionThm1iii {
 
 public:
 
@@ -22,8 +21,8 @@ public:
     // cmap['G' & 0b111] == 2, cmap['T' & 0b111] == 3,
     const std::array<uint8_t,8> cmap = {5,0,5,1,3,5,5,2};
 
-    ReductionThm1ii(){}
-    ReductionThm1ii(const sdsl::bit_vector& A_bits,
+    ReductionThm1iii(){}
+    ReductionThm1iii(const sdsl::bit_vector& A_bits,
                     const sdsl::bit_vector& C_bits,
                     const sdsl::bit_vector& G_bits,
                     const sdsl::bit_vector& T_bits){
@@ -55,15 +54,15 @@ public:
         rank_elems = rank_structure_t(data);
         empty = sdsl::sd_vector<>(empty_tmp);
         sdsl::util::init_support(sel_B, &B);
-        sdsl::util::init_support(rank_empty, &empty);
+        sdsl::util::init_support(rank_empty, &empty);        
     }
 
-    ReductionThm1ii(const ReductionThm1ii& other){
+    ReductionThm1iii(const ReductionThm1iii& other){
         assert(&other != this); 
         operator=(other);
     }
 
-    ReductionThm1ii& operator =(const ReductionThm1ii& other) {
+    ReductionThm1iii& operator =(const ReductionThm1iii& other) {
         if(&other != this){
 
             rank_elems = other.rank_elems;
@@ -81,10 +80,7 @@ public:
 
     // Rank of symbol in half-open interval [0..pos)
     int64_t rank(int64_t pos, char c) const {
-        // reduce to alphabet {0,1,2,3} if not already
-        if constexpr (alphabet_type == ACGT){
-            c = cmap[c & 0b111]; 
-        }
+        c = cmap[c & 0b111]; 
         pos -= rank_empty(pos);
         auto i = sel_B(pos + 1);
         return rank_elems.rank(i, c);
@@ -99,12 +95,12 @@ public:
     }
 
     int64_t serialize(ostream& os) const{
-        std::cerr << "Serialize has not been implemented for ReductionThm1ii\n";
+        std::cerr << "Serialize has not been implemented for ReductionThm1iii\n";
         exit(1);
     }
 
     void load(istream& is){
-        std::cerr << "Load has not been implemented for ReductionThm1ii\n";
+        std::cerr << "Load has not been implemented for ReductionThm1iii\n";
         exit(1);
     }
 };

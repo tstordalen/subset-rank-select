@@ -33,6 +33,22 @@ public:
     Z_rank_support_t Z_G_rs;
     Z_rank_support_t Z_T_rs;
 
+
+    int64_t size_in_bytes() const{
+        return sdsl::size_in_bytes(X) +
+        sdsl::size_in_bytes(Y ) +
+        sdsl::size_in_bytes(Z_A ) +
+        sdsl::size_in_bytes(Z_C ) +
+        sdsl::size_in_bytes(Z_G ) +
+        sdsl::size_in_bytes(Z_T ) +
+        sdsl::size_in_bytes(X_rs ) +
+        sdsl::size_in_bytes(Z_A_rs ) +
+        sdsl::size_in_bytes(Z_C_rs) +
+        sdsl::size_in_bytes(Z_G_rs) +
+        sdsl::size_in_bytes(Z_T_rs);
+    }
+
+
     // Returns the number of bytes written
     int64_t serialize(ostream& os) const{
         int64_t written = 0;
