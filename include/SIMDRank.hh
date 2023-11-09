@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 #include <immintrin.h>
-#include "BitMagic.hh"
 
 template <uint64_t block_size>
 class SIMDRank {
