@@ -158,10 +158,6 @@ public:
         uint8_t *mask_start = mask_midpoint - (word_index / 8);
         *mask_midpoint = (1 << (word_index % bits_per_byte)) - 1;
 
-        constexpr uint64_t unrolling_size = 8;
-        constexpr bool is_valid_unrolling_size = unrolling_size <= vectors_per_block && vectors_per_block % unrolling_size == 0;
-        static_assert(is_valid_unrolling_size, "unrolling_size must divide the vectors_per_block\n");
-
         // Avoid loop carried dependencies, allowing proper unrolling. 
         constexpr uint64_t n_accumulators = 4; 
         __m512i v_count[n_accumulators]; 
