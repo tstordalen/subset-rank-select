@@ -2,7 +2,7 @@
 
 This repository contains instructions to reproduce the experiments in the paper ``Rank and Select on Degenerate Strings'' (to be announced). 
 
-The experiments are forked from the experiments from ["Subset Wavelet Trees"](https://doi.org/10.4230/LIPIcs.SEA.2023.4) by Alanko et al., which you can find [here](https://github.com/jnalanko/SubsetWT-Experiments/tree/master). In [another paper](https://doi.org/10.1137/1.9781611977714.20) they provide a number of reductions from rank-select on degenerate strings to rank-select on regular strings. The experiments from this paper can be found [here](https://github.com/jnalanko/SBWT_experiments), but identical implementations of the reductions also appear in the repository we forked. 
+The experiments are forked from the experiments from ["Subset Wavelet Trees"](https://doi.org/10.4230/LIPIcs.SEA.2023.4) by Alanko et al., which you can find [here](https://github.com/jnalanko/SubsetWT-Experiments/tree/master). In [another paper](https://doi.org/10.1137/1.9781611977714.20) they provide a number of reductions from rank-select on degenerate strings to rank-select on regular strings. The experiments from that paper can be found [here](https://github.com/jnalanko/SBWT_experiments), but identical implementations of the reductions also appear in the repository we forked. 
 
 For the most part we have not modified their files. The exceptions are: 
 - Removed `main.cpp`; contained a benchmark for their rank-pair structures which we did not need.
